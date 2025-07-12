@@ -38,6 +38,32 @@
   background: white;
 }
 
+.task-textarea {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  min-height: 80px;
+}
+
+.task-textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: white;
+}
+
+.task-textarea::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
 .task-input::placeholder {
   color: #a0aec0;
   font-weight: 400;

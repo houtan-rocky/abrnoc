@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import type { Task } from '../types/Task';
+import type { Task, CreateTaskRequest, UpdateTaskRequest } from '../types/Task';
 import './TaskForm.css';
 
 interface TaskFormProps {
-  onAddTask: (description: string) => void;
+  onAddTask: (taskData: CreateTaskRequest) => void;
   editingTask: Task | null;
-  onUpdateTask: (id: string, description: string) => void;
+  onUpdateTask: (id: string, taskData: UpdateTaskRequest) => void;
   onCancelEdit: () => void;
 }
 
@@ -15,31 +15,43 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onUpdateTask,
   onCancelEdit
 }) => {
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (editingTask) {
-      setDescription(editingTask.description);
+      setTitle(editingTask.title);
+      setDescription(editingTask.description || '');
     } else {
+      setTitle('');
       setDescription('');
     }
   }, [editingTask]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedTitle = title.trim();
     const trimmedDescription = description.trim();
     
-    if (!trimmedDescription) return;
+    if (!trimmedTitle) return;
 
     if (editingTask) {
-      onUpdateTask(editingTask.id, trimmedDescription);
+      onUpdateTask(editingTask.id, {
+        title: trimmedTitle,
+        description: trimmedDescription || undefined
+      });
     } else {
-      onAddTask(trimmedDescription);
+      onAddTask({
+        title: trimmedTitle,
+        description: trimmedDescription || undefined
+      });
+      setTitle('');
       setDescription('');
     }
   };
 
   const handleCancel = () => {
+    setTitle('');
     setDescription('');
     onCancelEdit();
   };
@@ -49,11 +61,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <div className="form-group">
         <input
           type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder={editingTask ? "Edit task..." : "What needs to be done?"}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder={editingTask ? "Edit task title..." : "Task title"}
           className="task-input"
           autoFocus={editingTask !== null}
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Task description (optional)"
+          className="task-textarea"
+          rows={3}
         />
         <div className="form-buttons">
           {editingTask ? (

@@ -16,8 +16,11 @@ const TaskList: React.FC<TaskListProps> = ({
   onDeleteTask,
   onEditTask
 }) => {
-  const completedTasks = tasks.filter(task => task.completed);
-  const pendingTasks = tasks.filter(task => !task.completed);
+  console.log('TaskList: Received tasks:', tasks);
+  const completedTasks = tasks.filter(task => task.status === 'DONE');
+  const pendingTasks = tasks.filter(task => task.status !== 'DONE');
+  console.log('TaskList: Pending tasks:', pendingTasks);
+  console.log('TaskList: Completed tasks:', completedTasks);
 
   if (tasks.length === 0) {
     return (

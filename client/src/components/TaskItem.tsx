@@ -26,16 +26,16 @@ const TaskItem: React.FC<TaskItemProps> = ({
   };
 
   return (
-    <div className={`task-item ${task.completed ? "completed" : ""}`}>
+    <div className={`task-item ${task.status === 'DONE' ? "completed" : ""}`}>
       <div className="task-content">
         <button
-          className={`checkbox ${task.completed ? "checked" : ""}`}
+          className={`checkbox ${task.status === 'DONE' ? "checked" : ""}`}
           onClick={() => onToggle(task.id)}
           aria-label={
-            task.completed ? "Mark as incomplete" : "Mark as complete"
+            task.status === 'DONE' ? "Mark as incomplete" : "Mark as complete"
           }
         >
-          {task.completed && (
+          {task.status === 'DONE' && (
             <svg 
               viewBox="0 0 24 24" 
               fill="none" 
@@ -50,8 +50,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
         </button>
 
         <div className="task-details">
-          <p className="task-description">{task.description}</p>
-          <span className="task-date">{formatDate(task.createdAt)}</span>
+          <h3 className="task-title">{task.title}</h3>
+          {task.description && <p className="task-description">{task.description}</p>}
+          <div className="task-meta">
+            <span className={`task-status status-${task.status.toLowerCase()}`}>{task.status}</span>
+            <span className={`task-priority priority-${task.priority.toLowerCase()}`}>{task.priority}</span>
+            <span className="task-date">{formatDate(task.createdAt)}</span>
+          </div>
         </div>
       </div>
 
@@ -81,7 +86,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
         <button
           className="action-btn delete-btn"
-          onClick={() => onDelete(task.id)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Delete button clicked for task:', task.id);
+            onDelete(task.id);
+          }}
           aria-label="Delete task"
           title="Delete task"
         >
