@@ -1,116 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import TaskList from './components/TaskList';
-import TaskForm from './components/TaskForm';
-import LoginForm from './components/LoginForm';
-import RegisterForm from './components/RegisterForm';
-import type { Task, CreateTaskRequest, UpdateTaskRequest } from './types/Task';
-import apiService from './services/api';
 import { useAuth } from './hooks/useAuth';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
-  const { isAuthenticated, loading, logout } = useAuth();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [showRegister, setShowRegister] = useState(false);
-  const [loadingTasks, setLoadingTasks] = useState(false);
+  const { isAuthenticated, loading } = useAuth();
+  const [currentPage, setCurrentPage] = useState<'login' | 'signup' | 'dashboard'>('login');
 
-  // Load tasks when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      loadTasks();
+      setCurrentPage('dashboard');
+      // Update URL to dashboard
+      if (window.location.pathname !== '/dashboard') {
+        window.history.pushState({}, '', '/dashboard');
+      }
+    } else {
+      // Check current URL path
+      const path = window.location.pathname;
+      if (path === '/register' || path === '/signup') {
+        setCurrentPage('signup');
+      } else if (path === '/login') {
+        setCurrentPage('login');
+      } else {
+        // Default to login and update URL
+        setCurrentPage('login');
+        if (path !== '/login') {
+          window.history.pushState({}, '', '/login');
+        }
+      }
     }
   }, [isAuthenticated]);
 
-  const loadTasks = async () => {
-    setLoadingTasks(true);
-    try {
-      const fetchedTasks = await apiService.getTasks();
-      setTasks(fetchedTasks);
-    } catch (error) {
-      console.error('Failed to load tasks:', error);
-    } finally {
-      setLoadingTasks(false);
-    }
+  const navigateTo = (page: 'login' | 'signup' | 'dashboard') => {
+    setCurrentPage(page);
+    const path = page === 'signup' ? '/register' : `/${page}`;
+    window.history.pushState({}, '', path);
   };
 
-  const addTask = async (taskData: CreateTaskRequest) => {
-    try {
-      const newTask = await apiService.createTask(taskData);
-      setTasks([...tasks, newTask]);
-    } catch (error) {
-      console.error('Failed to create task:', error);
-    }
-  };
-
-  const updateTask = async (id: string, taskData: UpdateTaskRequest) => {
-    try {
-      const updatedTask = await apiService.updateTask(id, taskData);
-      setTasks(tasks.map(task => 
-        task.id === id ? updatedTask : task
-      ));
-      setEditingTask(null);
-    } catch (error) {
-      console.error('Failed to update task:', error);
-    }
-  };
-
-  const toggleTask = async (id: string) => {
-    try {
-      const task = tasks.find(t => t.id === id);
-      if (!task) return;
-
-      const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
-      const updatedTask = await apiService.updateTask(id, { status: newStatus });
-      setTasks(tasks.map(t => t.id === id ? updatedTask : t));
-    } catch (error) {
-      console.error('Failed to toggle task:', error);
-    }
-  };
-
-  const deleteTask = async (id: string) => {
-    try {
-      console.log('Deleting task with ID:', id);
-      
-      // If the task being deleted is currently being edited, cancel editing
-      if (editingTask && editingTask.id === id) {
-        setEditingTask(null);
-        console.log('Cancelled editing for deleted task');
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (isAuthenticated) {
+        if (path === '/dashboard') {
+          setCurrentPage('dashboard');
+        } else {
+          // Redirect to dashboard if authenticated
+          window.history.pushState({}, '', '/dashboard');
+          setCurrentPage('dashboard');
+        }
+      } else {
+        if (path === '/register' || path === '/signup') {
+          setCurrentPage('signup');
+        } else if (path === '/login') {
+          setCurrentPage('login');
+        } else {
+          // Redirect to login if not authenticated
+          window.history.pushState({}, '', '/login');
+          setCurrentPage('login');
+        }
       }
-      
-      // Optimistically remove the task from UI immediately
-      setTasks(prevTasks => {
-        const updatedTasks = prevTasks.filter(task => task.id !== id);
-        console.log('Optimistically removed task, remaining tasks:', updatedTasks);
-        return updatedTasks;
-      });
-      
-      // Then make the API call
-      await apiService.deleteTask(id);
-      console.log('Delete API call successful');
-      
-    } catch (error) {
-      console.error('Failed to delete task:', error);
-      // If API call fails, restore the task
-      console.log('Restoring task due to API failure');
-      // You could reload all tasks here or restore the specific task
-      loadTasks();
-    }
-  };
+    };
 
-  const startEditing = (task: Task) => {
-    setEditingTask(task);
-  };
-
-  const cancelEditing = () => {
-    setEditingTask(null);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setTasks([]);
-    setEditingTask(null);
-  };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isAuthenticated]);
 
   if (loading) {
     return (
@@ -120,49 +76,16 @@ function App() {
     );
   }
 
-  if (!isAuthenticated) {
-    return showRegister ? (
-      <RegisterForm onSwitchToLogin={() => setShowRegister(false)} />
-    ) : (
-      <LoginForm onSwitchToRegister={() => setShowRegister(true)} />
-    );
+  switch (currentPage) {
+    case 'login':
+      return <LoginPage onNavigateToSignup={() => navigateTo('signup')} />;
+    case 'signup':
+      return <SignupPage onNavigateToLogin={() => navigateTo('login')} />;
+    case 'dashboard':
+      return <DashboardPage />;
+    default:
+      return <LoginPage onNavigateToSignup={() => navigateTo('signup')} />;
   }
-
-  return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <div>
-            <h1>Task Manager</h1>
-            <p>Organize your life, one task at a time</p>
-          </div>
-          <button onClick={handleLogout} className="logout-btn">
-            Logout
-          </button>
-        </div>
-      </header>
-      
-      <main className="app-main">
-        <TaskForm 
-          onAddTask={addTask}
-          editingTask={editingTask}
-          onUpdateTask={updateTask}
-          onCancelEdit={cancelEditing}
-        />
-        
-        {loadingTasks ? (
-          <div className="loading">Loading tasks...</div>
-        ) : (
-          <TaskList
-            tasks={tasks}
-            onToggleTask={toggleTask}
-            onDeleteTask={deleteTask}
-            onEditTask={startEditing}
-          />
-        )}
-      </main>
-    </div>
-  );
 }
 
 export default App;
