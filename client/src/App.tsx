@@ -2,45 +2,100 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
-import { Task } from './types/Task';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import type { Task, CreateTaskRequest, UpdateTaskRequest } from './types/Task';
+import apiService from './services/api';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    return savedTasks ? JSON.parse(savedTasks) : [];
-  });
-
+  const { isAuthenticated, loading, logout } = useAuth();
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [showRegister, setShowRegister] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(false);
 
+  // Load tasks when authenticated
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    if (isAuthenticated) {
+      loadTasks();
+    }
+  }, [isAuthenticated]);
 
-  const addTask = (description: string) => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      description,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-    setTasks([...tasks, newTask]);
+  const loadTasks = async () => {
+    setLoadingTasks(true);
+    try {
+      const fetchedTasks = await apiService.getTasks();
+      setTasks(fetchedTasks);
+    } catch (error) {
+      console.error('Failed to load tasks:', error);
+    } finally {
+      setLoadingTasks(false);
+    }
   };
 
-  const updateTask = (id: string, description: string) => {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, description } : task
-    ));
-    setEditingTask(null);
+  const addTask = async (taskData: CreateTaskRequest) => {
+    try {
+      const newTask = await apiService.createTask(taskData);
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      console.error('Failed to create task:', error);
+    }
   };
 
-  const toggleTask = (id: string) => {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+  const updateTask = async (id: string, taskData: UpdateTaskRequest) => {
+    try {
+      const updatedTask = await apiService.updateTask(id, taskData);
+      setTasks(tasks.map(task => 
+        task.id === id ? updatedTask : task
+      ));
+      setEditingTask(null);
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
   };
 
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const toggleTask = async (id: string) => {
+    try {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
+      const updatedTask = await apiService.updateTask(id, { status: newStatus });
+      setTasks(tasks.map(t => t.id === id ? updatedTask : t));
+    } catch (error) {
+      console.error('Failed to toggle task:', error);
+    }
+  };
+
+  const deleteTask = async (id: string) => {
+    try {
+      console.log('Deleting task with ID:', id);
+      
+      // If the task being deleted is currently being edited, cancel editing
+      if (editingTask && editingTask.id === id) {
+        setEditingTask(null);
+        console.log('Cancelled editing for deleted task');
+      }
+      
+      // Optimistically remove the task from UI immediately
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.filter(task => task.id !== id);
+        console.log('Optimistically removed task, remaining tasks:', updatedTasks);
+        return updatedTasks;
+      });
+      
+      // Then make the API call
+      await apiService.deleteTask(id);
+      console.log('Delete API call successful');
+      
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      // If API call fails, restore the task
+      console.log('Restoring task due to API failure');
+      // You could reload all tasks here or restore the specific task
+      loadTasks();
+    }
   };
 
   const startEditing = (task: Task) => {
@@ -51,11 +106,40 @@ function App() {
     setEditingTask(null);
   };
 
+  const handleLogout = () => {
+    logout();
+    setTasks([]);
+    setEditingTask(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="app">
+        <div className="loading">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return showRegister ? (
+      <RegisterForm onSwitchToLogin={() => setShowRegister(false)} />
+    ) : (
+      <LoginForm onSwitchToRegister={() => setShowRegister(true)} />
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Task Manager</h1>
-        <p>Organize your life, one task at a time</p>
+        <div className="header-content">
+          <div>
+            <h1>Task Manager</h1>
+            <p>Organize your life, one task at a time</p>
+          </div>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </header>
       
       <main className="app-main">
@@ -66,12 +150,16 @@ function App() {
           onCancelEdit={cancelEditing}
         />
         
-        <TaskList
-          tasks={tasks}
-          onToggleTask={toggleTask}
-          onDeleteTask={deleteTask}
-          onEditTask={startEditing}
-        />
+        {loadingTasks ? (
+          <div className="loading">Loading tasks...</div>
+        ) : (
+          <TaskList
+            tasks={tasks}
+            onToggleTask={toggleTask}
+            onDeleteTask={deleteTask}
+            onEditTask={startEditing}
+          />
+        )}
       </main>
     </div>
   );
