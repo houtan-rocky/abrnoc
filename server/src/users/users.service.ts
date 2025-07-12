@@ -13,23 +13,28 @@ export class UsersService {
   private users: User[] = [];
   private userIdCounter = 1;
 
+  private omitPassword(user: User) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+    const { username, email, password } = createUserDto; // ignore confirmPassword
     const existingUser = this.users.find(
-      (user) =>
-        user.username === createUserDto.username ||
-        user.email === createUserDto.email,
+      (user) => user.username === username || user.email === email,
     );
 
     if (existingUser) {
       throw new ConflictException('Username or email already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user: User = {
       id: this.userIdCounter.toString(),
-      username: createUserDto.username,
-      email: createUserDto.email,
+      username,
+      email,
       password: hashedPassword,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -38,9 +43,7 @@ export class UsersService {
     this.users.push(user);
     this.userIdCounter++;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return this.omitPassword(user);
   }
 
   async validateUser(
@@ -63,9 +66,7 @@ export class UsersService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return this.omitPassword(user);
   }
 
   findById(id: string): Omit<User, 'password'> | null {
@@ -73,8 +74,6 @@ export class UsersService {
     if (!user) {
       return null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return this.omitPassword(user);
   }
 }

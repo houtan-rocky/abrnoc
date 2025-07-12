@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# TypeScript build artifacts
+*.js
+*.js.map
+
 # Logs
 logs
 *.log

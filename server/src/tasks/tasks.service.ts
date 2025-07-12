@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskPriority, TaskStatus } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
@@ -14,7 +14,6 @@ export class TasksService {
       title: createTaskDto.title,
       description: createTaskDto.description,
       status: createTaskDto.status || TaskStatus.TODO,
-      priority: createTaskDto.priority || TaskPriority.MEDIUM,
       dueDate: createTaskDto.dueDate
         ? new Date(createTaskDto.dueDate)
         : undefined,

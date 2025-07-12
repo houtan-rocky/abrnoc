@@ -43,8 +43,7 @@ const schema = yup.object({
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
   const { register: registerUser } = useAuth();
 
   const {
@@ -61,7 +60,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
     setLoading(true);
 
     try {
-      await registerUser(data.username, data.email, data.password);
+      await registerUser(data.username, data.email, data.password, data.confirmPassword);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed';
       setError('root', {
@@ -74,11 +73,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+    setShowPasswords(!showPasswords);
   };
 
   return (
@@ -114,7 +109,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           <label htmlFor="password">Password</label>
           <div className="password-input-container">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPasswords ? 'text' : 'password'}
               id="password"
               {...register('password')}
               className={errors.password ? 'error' : ''}
@@ -126,7 +121,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
               onClick={togglePasswordVisibility}
               disabled={loading}
             >
-              {showPassword ? (
+              {showPasswords ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                   <line x1="1" y1="1" x2="23" y2="23"/>
@@ -146,7 +141,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           <label htmlFor="confirmPassword">Confirm Password</label>
           <div className="password-input-container">
             <input
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showPasswords ? 'text' : 'password'}
               id="confirmPassword"
               {...register('confirmPassword')}
               className={errors.confirmPassword ? 'error' : ''}
@@ -155,10 +150,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
             <button
               type="button"
               className="password-toggle"
-              onClick={toggleConfirmPasswordVisibility}
+              onClick={togglePasswordVisibility}
               disabled={loading}
             >
-              {showConfirmPassword ? (
+              {showPasswords ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                   <line x1="1" y1="1" x2="23" y2="23"/>

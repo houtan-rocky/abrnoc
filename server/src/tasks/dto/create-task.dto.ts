@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskStatus, TaskPriority } from '../entities/task.entity';
+import { TaskStatus } from '../entities/task.entity';
 
 export class CreateTaskDto {
   @ApiProperty({
@@ -29,17 +29,6 @@ export class CreateTaskDto {
   @IsOptional()
   @IsEnum(TaskStatus)
   status?: TaskStatus = TaskStatus.TODO;
-
-  @ApiProperty({
-    description: 'Priority level of the task',
-    enum: TaskPriority,
-    default: TaskPriority.MEDIUM,
-    required: false,
-    example: TaskPriority.MEDIUM,
-  })
-  @IsOptional()
-  @IsEnum(TaskPriority)
-  priority?: TaskPriority = TaskPriority.MEDIUM;
 
   @ApiProperty({
     description: 'Due date for the task (ISO string)',

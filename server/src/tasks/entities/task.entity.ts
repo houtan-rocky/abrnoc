@@ -7,13 +7,6 @@ export enum TaskStatus {
   CANCELLED = 'CANCELLED',
 }
 
-export enum TaskPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT',
-}
-
 export class Task {
   @ApiProperty({ description: 'Unique identifier for the task' })
   id: string;
@@ -33,13 +26,6 @@ export class Task {
     example: TaskStatus.TODO,
   })
   status: TaskStatus;
-
-  @ApiProperty({
-    description: 'Priority level of the task',
-    enum: TaskPriority,
-    example: TaskPriority.MEDIUM,
-  })
-  priority: TaskPriority;
 
   @ApiProperty({
     description: 'Due date for the task',

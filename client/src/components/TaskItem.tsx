@@ -54,7 +54,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
           {task.description && <p className="task-description">{task.description}</p>}
           <div className="task-meta">
             <span className={`task-status status-${task.status.toLowerCase()}`}>{task.status}</span>
-            <span className={`task-priority priority-${task.priority.toLowerCase()}`}>{task.priority}</span>
             <span className="task-date">{formatDate(task.createdAt)}</span>
           </div>
         </div>

@@ -3,7 +3,6 @@ export interface Task {
   title: string;
   description?: string;
   status: TaskStatus;
-  priority: TaskPriority;
   dueDate?: string;
   userId: string;
   createdAt: string;
@@ -18,15 +17,6 @@ export const TaskStatus = {
 } as const;
 
 export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
-
-export const TaskPriority = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  URGENT: 'URGENT'
-} as const;
-
-export type TaskPriority = typeof TaskPriority[keyof typeof TaskPriority];
 
 export interface User {
   id: string;
@@ -50,13 +40,13 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 export interface CreateTaskRequest {
   title: string;
   description?: string;
   status?: TaskStatus;
-  priority?: TaskPriority;
   dueDate?: string;
 }
 
@@ -64,6 +54,5 @@ export interface UpdateTaskRequest {
   title?: string;
   description?: string;
   status?: TaskStatus;
-  priority?: TaskPriority;
   dueDate?: string;
 } 

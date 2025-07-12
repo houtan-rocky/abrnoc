@@ -168,35 +168,6 @@
   color: #e53e3e;
 }
 
-.task-priority {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.task-priority:contains("LOW") {
-  background: #f7fafc;
-  color: #718096;
-}
-
-.task-priority:contains("MEDIUM") {
-  background: #fef5e7;
-  color: #d69e2e;
-}
-
-.task-priority:contains("HIGH") {
-  background: #fed7d7;
-  color: #e53e3e;
-}
-
-.task-priority:contains("URGENT") {
-  background: #742a2a;
-  color: white;
-}
-
 .task-date {
   font-size: 0.8rem;
   color: #a0aec0;
