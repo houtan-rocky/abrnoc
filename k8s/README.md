@@ -2,7 +2,7 @@
 
 **Repository**: [https://github.com/houtan-rocky/abrnoc](https://github.com/houtan-rocky/abrnoc)
 
-> **⚠️ Important:** This Kubernetes deployment requires a running Kubernetes cluster. For most users, the Docker Compose approach (`./run.sh` or `run.bat`) is recommended as it requires no additional setup.
+> **⚠️ Important:** This Kubernetes deployment requires a running Kubernetes cluster. For most users, the Docker Compose approach (`./run.sh`) is recommended as it requires no additional setup.
 
 ## Prerequisites
 

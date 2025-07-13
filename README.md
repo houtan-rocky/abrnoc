@@ -15,7 +15,7 @@ A full-stack task management application built with React (frontend) and NestJS 
 
 ### Universal Run Scripts (Recommended)
 
-The project includes cross-platform run scripts that work on **Windows**, **macOS**, and **Linux** with just one command!
+The project includes run scripts that work on **macOS** and **Linux** with just one command!
 
 **For macOS/Linux:**
 ```bash
@@ -24,7 +24,8 @@ The project includes cross-platform run scripts that work on **Windows**, **macO
 
 **For Windows:**
 ```cmd
-run.bat
+# Windows users can use WSL or Git Bash to run the same commands
+# Or use Docker Desktop directly with docker-compose
 ```
 
 That's it! The script will:
@@ -34,6 +35,8 @@ That's it! The script will:
 - ✅ Provide helpful commands for management
 - ✅ Handle both old and new Docker Compose syntax
 - ✅ Give you colored output and clear instructions
+
+**Note for Windows users:** If you're on Windows, you can use WSL (Windows Subsystem for Linux), Git Bash, or run Docker Compose commands directly in PowerShell/Command Prompt.
 
 ### Installing Dependencies (Local Development)
 
@@ -55,7 +58,7 @@ npm run install:server
 ./install.sh
 
 # For Windows:
-install.bat
+# Windows users can use WSL or Git Bash to run the same commands
 ```
 
 This will install all dependencies for:
@@ -207,9 +210,7 @@ abrnoc/
 │   ├── ingress.yaml       # Traffic routing
 │   └── hpa.yaml          # Auto-scaling
 ├── run.sh                 # Universal run script (macOS/Linux)
-├── run.bat               # Universal run script (Windows)
 ├── install.sh             # Dependency installer (macOS/Linux)
-├── install.bat           # Dependency installer (Windows)
 ├── deploy.sh             # Kubernetes deployment script
 ├── docker-compose.yml    # Local development stack
 └── README.md             # This file

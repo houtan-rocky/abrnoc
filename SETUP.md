@@ -18,7 +18,8 @@ This guide is for anyone who wants to quickly run and test the ABRNOC Task Manag
 
 ### On Windows:
 ```cmd
-run.bat
+# Windows users can use WSL or Git Bash to run the same commands
+# Or use Docker Desktop directly with docker-compose
 ```
 
 ### On macOS/Linux:
