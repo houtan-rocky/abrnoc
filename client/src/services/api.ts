@@ -29,6 +29,18 @@ class ApiService {
     return headers;
   }
 
+  private handleAuthError(): void {
+    // Clear token and redirect to login
+    this.logout();
+    
+    // Update URL to login page
+    if (window.location.pathname !== '/login') {
+      window.history.pushState({}, '', '/login');
+      // Force a page reload to trigger the routing logic
+      window.location.reload();
+    }
+  }
+
   private async request<T>(
     endpoint: string, 
     options: RequestInit = {}
@@ -43,6 +55,13 @@ class ApiService {
       const response = await fetch(url, config);
       
       if (!response.ok) {
+        // Handle authentication errors
+        if (response.status === 401 || response.status === 403) {
+          this.handleAuthError();
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Authentication failed. Please log in again.');
+        }
+        
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }

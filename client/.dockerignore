@@ -13,7 +13,4 @@ README.md
 dist
 coverage
 .vscode
-.idea
-test
-*.spec.ts
-*.e2e-spec.ts 
+.idea 

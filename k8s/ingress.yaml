@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: abrnoc-ingress
+  namespace: abrnoc
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: abrnoc.local  # Replace with your actual domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: client-service
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 3000
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 3000
+      - path: /tasks
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 3000
+      - path: /users
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 3000 
