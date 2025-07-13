@@ -38,8 +38,7 @@ print_status "Building Docker images..."
 
 # Build server image
 print_status "Building server image..."
-cd server
-docker build -t abrnoc-server:latest .
+docker build -t abrnoc-server:latest ./server
 if [ $? -ne 0 ]; then
     print_error "Failed to build server image"
     exit 1
@@ -47,41 +46,38 @@ fi
 
 # Build client image
 print_status "Building client image..."
-cd ../client
-docker build -t abrnoc-client:latest .
+docker build -t abrnoc-client:latest ./client
 if [ $? -ne 0 ]; then
     print_error "Failed to build client image"
     exit 1
 fi
 
-cd ../k8s
-
 # Create namespace
 print_status "Creating namespace..."
-kubectl apply -f namespace.yaml
+kubectl apply -f ./k8s/namespace.yaml
 
 # Apply ConfigMap and Secret
 print_status "Applying ConfigMap and Secret..."
-kubectl apply -f configmap.yaml
-kubectl apply -f secret.yaml
+kubectl apply -f ./k8s/configmap.yaml
+kubectl apply -f ./k8s/secret.yaml
 
 # Apply deployments
 print_status "Applying deployments..."
-kubectl apply -f server-deployment.yaml
-kubectl apply -f client-deployment.yaml
+kubectl apply -f ./k8s/server-deployment.yaml
+kubectl apply -f ./k8s/client-deployment.yaml
 
 # Apply services
 print_status "Applying services..."
-kubectl apply -f server-service.yaml
-kubectl apply -f client-service.yaml
+kubectl apply -f ./k8s/server-service.yaml
+kubectl apply -f ./k8s/client-service.yaml
 
 # Apply ingress
 print_status "Applying ingress..."
-kubectl apply -f ingress.yaml
+kubectl apply -f ./k8s/ingress.yaml
 
 # Apply HPA
 print_status "Applying Horizontal Pod Autoscalers..."
-kubectl apply -f hpa.yaml
+kubectl apply -f ./k8s/hpa.yaml
 
 # Wait for deployments to be ready
 print_status "Waiting for deployments to be ready..."
