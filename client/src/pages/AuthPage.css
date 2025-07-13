@@ -82,6 +82,12 @@
 }
 
 @media (max-width: 480px) {
+  .auth-page {
+    padding: 0.5rem;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
   .auth-header h2 {
     font-size: 1.75rem;
   }
