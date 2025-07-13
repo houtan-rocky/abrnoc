@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --port 8080",
+    "clean": "rm -rf node_modules dist pnpm-lock.yaml"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

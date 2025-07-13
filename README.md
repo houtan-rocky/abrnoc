@@ -2,6 +2,8 @@
 
 A full-stack task management application built with React (frontend) and NestJS (backend).
 
+**Repository**: [https://github.com/houtan-rocky/abrnoc](https://github.com/houtan-rocky/abrnoc)
+
 ## Architecture
 
 - **Frontend**: React with TypeScript, Vite, React Router, React Hook Form
@@ -33,6 +35,34 @@ That's it! The script will:
 - ✅ Handle both old and new Docker Compose syntax
 - ✅ Give you colored output and clear instructions
 
+### Installing Dependencies (Local Development)
+
+If you want to run the projects locally without Docker:
+
+**Option 1: Using npm scripts (Recommended)**
+```bash
+# Install all dependencies
+npm run install:all
+
+# Install specific project dependencies
+npm run install:client
+npm run install:server
+```
+
+**Option 2: Using install scripts**
+```bash
+# For macOS/Linux:
+./install.sh
+
+# For Windows:
+install.bat
+```
+
+This will install all dependencies for:
+- ✅ Root project (if any)
+- ✅ Client (React Frontend)
+- ✅ Server (NestJS Backend)
+
 **Access your application:**
 - 🌐 **Frontend**: http://localhost:8080
 - 🔧 **Backend API**: http://localhost:3000
@@ -40,6 +70,7 @@ That's it! The script will:
 
 ### Available Commands
 
+#### Docker Commands
 ```bash
 # Start the application (default)
 ./run.sh
@@ -58,6 +89,49 @@ That's it! The script will:
 
 # Clean up (remove all containers and images)
 ./run.sh clean
+```
+
+#### NPM Scripts (Recommended)
+```bash
+# Install all dependencies
+npm run install:all
+
+# Install specific project dependencies
+npm run install:client
+npm run install:server
+
+# Development
+npm run dev              # Start both client and server
+npm run dev:client       # Start only client
+npm run dev:server       # Start only server
+
+# Build
+npm run build            # Build both client and server
+npm run build:client     # Build only client
+npm run build:server     # Build only server
+
+# Docker
+npm run docker:up        # Start with Docker
+npm run docker:down      # Stop Docker containers
+npm run docker:logs      # View Docker logs
+
+# Kubernetes
+npm run k8s:deploy       # Deploy to Kubernetes
+
+# Cleanup
+npm run clean            # Remove all node_modules and lock files
+```
+
+#### Install Scripts
+```bash
+# Install dependencies for local development
+./install.sh
+
+# Clean all node_modules and lock files
+./install.sh clean
+
+# Check for package.json files
+./install.sh check
 ```
 
 ### Alternative Deployment Options
@@ -134,6 +208,9 @@ abrnoc/
 │   └── hpa.yaml          # Auto-scaling
 ├── run.sh                 # Universal run script (macOS/Linux)
 ├── run.bat               # Universal run script (Windows)
+├── install.sh             # Dependency installer (macOS/Linux)
+├── install.bat           # Dependency installer (Windows)
+├── deploy.sh             # Kubernetes deployment script
 ├── docker-compose.yml    # Local development stack
 └── README.md             # This file
 ```

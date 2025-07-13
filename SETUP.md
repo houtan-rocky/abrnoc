@@ -1,5 +1,7 @@
 # 🚀 Quick Setup Guide
 
+**Repository**: [https://github.com/houtan-rocky/abrnoc](https://github.com/houtan-rocky/abrnoc)
+
 ## For Reviewers/Evaluators
 
 This guide is for anyone who wants to quickly run and test the ABRNOC Task Management Application.

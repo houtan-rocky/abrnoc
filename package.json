@@ -2,9 +2,21 @@
   "name": "my-monorepo",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm --prefix server run start:dev\" \"npm --prefix client run dev\"",
-    "dev:server": "npm --prefix server run start:dev",
-    "dev:client": "npm --prefix client run dev"
+    "install:all": "pnpm install && pnpm --prefix client install && pnpm --prefix server install",
+    "install:client": "pnpm --prefix client install",
+    "install:server": "pnpm --prefix server install",
+    "dev": "concurrently \"pnpm --prefix server run start:dev\" \"pnpm --prefix client run dev\"",
+    "dev:server": "pnpm --prefix server run start:dev",
+    "dev:client": "pnpm --prefix client run dev",
+    "build": "pnpm --prefix client run build && pnpm --prefix server run build",
+    "build:client": "pnpm --prefix client run build",
+    "build:server": "pnpm --prefix server run build",
+    "start": "pnpm --prefix server run start:prod",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules && rm -f pnpm-lock.yaml client/pnpm-lock.yaml server/pnpm-lock.yaml",
+    "docker:up": "./run.sh",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "k8s:deploy": "./deploy.sh"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"
