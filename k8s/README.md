@@ -1,13 +1,40 @@
 # Kubernetes Deployment Guide
 
-This directory contains Kubernetes manifests for deploying the ABRNOC application (frontend + backend) to a Kubernetes cluster.
+> **⚠️ Important:** This Kubernetes deployment requires a running Kubernetes cluster. For most users, the Docker Compose approach (`./run.sh` or `run.bat`) is recommended as it requires no additional setup.
 
 ## Prerequisites
 
 1. **Kubernetes Cluster**: A running Kubernetes cluster (local or cloud)
+   - **Docker Desktop with Kubernetes**: Enable in Settings → Kubernetes
+   - **Minikube**: `brew install minikube && minikube start`
+   - **Kind**: `brew install kind && kind create cluster`
+   - **Cloud cluster**: GKE, EKS, AKS, etc.
 2. **kubectl**: Kubernetes command-line tool
 3. **Docker**: For building container images
 4. **NGINX Ingress Controller**: For routing external traffic (if using ingress)
+
+## Quick Setup for Local Development
+
+### Option 1: Docker Desktop with Kubernetes (Easiest)
+1. Open Docker Desktop
+2. Go to Settings → Kubernetes
+3. Check "Enable Kubernetes"
+4. Click "Apply & Restart"
+5. Wait for Kubernetes to start (green icon)
+6. Run: `./k8s/deploy.sh`
+
+### Option 2: Minikube
+```bash
+# Install Minikube
+brew install minikube  # macOS
+# or download from: https://minikube.sigs.k8s.io/docs/start/
+
+# Start cluster
+minikube start
+
+# Deploy
+./k8s/deploy.sh
+```
 
 ## Architecture
 

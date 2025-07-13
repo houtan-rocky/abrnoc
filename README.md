@@ -9,10 +9,60 @@ A full-stack task management application built with React (frontend) and NestJS 
 - **Containerization**: Docker with multi-stage builds
 - **Orchestration**: Kubernetes with auto-scaling and load balancing
 
-## Quick Start
+## 🚀 Quick Start (One Command Setup)
 
-### Option 1: Docker Compose (Development)
+### Universal Run Scripts (Recommended)
 
+The project includes cross-platform run scripts that work on **Windows**, **macOS**, and **Linux** with just one command!
+
+**For macOS/Linux:**
+```bash
+./run.sh
+```
+
+**For Windows:**
+```cmd
+run.bat
+```
+
+That's it! The script will:
+- ✅ Check if Docker is installed and running
+- ✅ Build and start both frontend and backend
+- ✅ Show you the access URLs
+- ✅ Provide helpful commands for management
+- ✅ Handle both old and new Docker Compose syntax
+- ✅ Give you colored output and clear instructions
+
+**Access your application:**
+- 🌐 **Frontend**: http://localhost:8080
+- 🔧 **Backend API**: http://localhost:3000
+- 📚 **API Documentation**: http://localhost:3000/api
+
+### Available Commands
+
+```bash
+# Start the application (default)
+./run.sh
+
+# View logs
+./run.sh logs
+
+# Check status
+./run.sh status
+
+# Stop application
+./run.sh stop
+
+# Restart application
+./run.sh restart
+
+# Clean up (remove all containers and images)
+./run.sh clean
+```
+
+### Alternative Deployment Options
+
+#### Option 1: Docker Compose (Manual)
 ```bash
 # Build and run with Docker Compose
 docker-compose up --build
@@ -23,9 +73,9 @@ docker-compose up --build
 # Swagger Docs: http://localhost:3000/api
 ```
 
-### Option 2: Kubernetes (Production)
-
+#### Option 2: Kubernetes (Production) - Advanced
 ```bash
+# Prerequisites: Kubernetes cluster (Docker Desktop with K8s, Minikube, or cloud cluster)
 # Deploy to Kubernetes
 ./k8s/deploy.sh
 
@@ -34,8 +84,9 @@ kubectl port-forward -n abrnoc svc/client-service 8080:80
 # Then visit: http://localhost:8080
 ```
 
-### Option 3: Local Development
+**Note:** Kubernetes deployment requires a running Kubernetes cluster. For local development, use the Docker Compose option above.
 
+#### Option 3: Local Development
 ```bash
 # Install dependencies
 pnpm install
@@ -47,7 +98,7 @@ cd server && pnpm run start:dev
 cd client && pnpm run dev
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 abrnoc/
@@ -59,30 +110,56 @@ abrnoc/
 │   │   ├── services/      # API services
 │   │   └── types/         # TypeScript types
 │   ├── Dockerfile         # Frontend container
-│   └── nginx.conf         # NGINX configuration
+│   ├── nginx.conf         # NGINX configuration
+│   └── .dockerignore      # Docker ignore rules
 ├── server/                # NestJS backend
 │   ├── src/
 │   │   ├── auth/          # Authentication module
 │   │   ├── tasks/         # Tasks module
 │   │   ├── users/         # Users module
 │   │   └── common/        # Shared utilities
-│   └── Dockerfile         # Backend container
+│   ├── Dockerfile         # Backend container
+│   └── .dockerignore      # Docker ignore rules
 ├── k8s/                   # Kubernetes manifests
 │   ├── deploy.sh          # Deployment script
 │   ├── README.md          # K8s documentation
-│   └── *.yaml             # K8s resource files
-└── docker-compose.yml     # Local development stack
+│   ├── namespace.yaml     # K8s namespace
+│   ├── configmap.yaml     # Application config
+│   ├── secret.yaml        # Sensitive data
+│   ├── server-deployment.yaml  # Backend deployment
+│   ├── client-deployment.yaml  # Frontend deployment
+│   ├── server-service.yaml     # Backend service
+│   ├── client-service.yaml     # Frontend service
+│   ├── ingress.yaml       # Traffic routing
+│   └── hpa.yaml          # Auto-scaling
+├── run.sh                 # Universal run script (macOS/Linux)
+├── run.bat               # Universal run script (Windows)
+├── docker-compose.yml    # Local development stack
+└── README.md             # This file
 ```
 
-## Features
+## ✨ Features
 
+### 🎯 Core Features
 - **User Authentication**: JWT-based login/register
 - **Task Management**: CRUD operations for tasks
-- **Responsive UI**: Modern React components
-- **API Documentation**: Swagger/OpenAPI
-- **Containerized**: Docker support
-- **Scalable**: Kubernetes deployment
-- **Auto-scaling**: HPA for load management
+- **Responsive UI**: Modern React components with React Hook Form
+- **API Documentation**: Swagger/OpenAPI with interactive docs
+
+### 🐳 Containerization & Deployment
+- **Universal Run Scripts**: One-command setup for Windows, macOS, and Linux
+- **Docker Support**: Multi-stage builds with optimized images
+- **Docker Compose**: Local development stack
+- **Kubernetes Ready**: Production deployment with auto-scaling
+- **Health Checks**: Built-in monitoring and readiness probes
+
+### 🚀 Production Features
+- **Auto-scaling**: Horizontal Pod Autoscalers (HPA) - Kubernetes only
+- **Load Balancing**: Kubernetes services and ingress - Kubernetes only
+- **Security**: Non-root containers, security headers
+- **Monitoring**: Health endpoints and logging
+- **NGINX**: Optimized static file serving with compression
+- **Docker Compose**: Simple local development and testing
 
 ## API Endpoints
 
@@ -112,21 +189,41 @@ docker run -p 3000:3000 abrnoc-server:latest
 
 See [k8s/README.md](k8s/README.md) for detailed Kubernetes deployment instructions.
 
-## Development
+## 🛠️ Development
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm
-- Docker (optional)
-- kubectl (for K8s deployment)
+- **Docker Desktop** (for containerized development)
+- **Node.js 18+** (for local development)
+- **pnpm** (for local development)
+- **kubectl** (for Kubernetes deployment - optional)
+
+### 🚀 Getting Started
+
+#### Option 1: Containerized Development (Recommended)
+```bash
+# Just run this one command!
+./run.sh
+```
+
+#### Option 2: Local Development
+```bash
+# Install dependencies
+pnpm install
+
+# Start backend
+cd server && pnpm run start:dev
+
+# Start frontend (in another terminal)
+cd client && pnpm run dev
+```
 
 ### Environment Variables
 
-Create `.env` files in both `client/` and `server/` directories:
+For local development, create `.env` files:
 
 **server/.env:**
-```
+```env
 NODE_ENV=development
 PORT=3000
 JWT_SECRET=your-jwt-secret
@@ -134,19 +231,44 @@ DATABASE_URL=your-database-url
 ```
 
 **client/.env:**
-```
+```env
 VITE_API_URL=http://localhost:3000
 ```
 
-## Contributing
+### 🔧 Development Commands
+
+```bash
+# Frontend (client/)
+pnpm run dev          # Start development server
+pnpm run build        # Build for production
+pnpm run lint         # Run ESLint
+
+# Backend (server/)
+pnpm run start:dev    # Start development server
+pnpm run build        # Build for production
+pnpm run test         # Run tests
+pnpm run lint         # Run ESLint
+```
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Add tests if applicable
-5. Submit a pull request
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## License
+## 📝 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [React](https://reactjs.org/) and [NestJS](https://nestjs.com/)
+- Containerized with [Docker](https://www.docker.com/)
+- Orchestrated with [Kubernetes](https://kubernetes.io/)
+- Styled with modern CSS and responsive design
+
 
